@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Todo</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --danger: #ef4444;
+    --done: #64748b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 48px 16px;
+  }
+  .app {
+    width: 100%;
+    max-width: 480px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 24px;
+    font-weight: 600;
+  }
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+  }
+  input[type="text"]:focus { border-color: var(--accent); }
+  button {
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  button:hover { background: var(--accent-hover); }
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .filters button {
+    background: transparent;
+    color: var(--muted);
+    padding: 6px 12px;
+    font-size: 13px;
+    border: 1px solid #334155;
+  }
+  .filters button.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--panel);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  li.done .label {
+    text-decoration: line-through;
+    color: var(--done);
+  }
+  .label { flex: 1; font-size: 15px; }
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .delete {
+    background: transparent;
+    color: var(--muted);
+    padding: 4px 8px;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .delete:hover { color: var(--danger); background: transparent; }
+  .footer {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 32px 0;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Todo</h1>
+  <form class="input-row" id="form">
+    <input type="text" id="input" placeholder="What needs doing?" autocomplete="off" />
+    <button type="submit">Add</button>
+  </form>
+  <div class="filters">
+    <button data-filter="all" class="active">All</button>
+    <button data-filter="active">Active</button>
+    <button data-filter="done">Done</button>
+  </div>
+  <ul id="list"></ul>
+  <div class="footer">
+    <span id="count">0 items</span>
+    <button id="clear-done" style="background:transparent;color:var(--muted);padding:0;font-size:13px;">Clear done</button>
+  </div>
+</div>
+<script>
+  const STORAGE_KEY = "todo.items.v1";
+  let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  let filter = "all";
+
+  const form = document.getElementById("form");
+  const input = document.getElementById("input");
+  const list = document.getElementById("list");
+  const count = document.getElementById("count");
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }
+
+  function render() {
+    const visible = items.filter(t =>
+      filter === "all" ? true : filter === "done" ? t.done : !t.done
+    );
+    list.innerHTML = "";
+    if (visible.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = items.length === 0 ? "Nothing yet. Add a todo above." : "No items match this filter.";
+      list.appendChild(empty);
+    } else {
+      for (const t of visible) {
+        const li = document.createElement("li");
+        if (t.done) li.classList.add("done");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = t.done;
+        cb.addEventListener("change", () => { t.done = cb.checked; save(); render(); });
+        const label = document.createElement("span");
+        label.className = "label";
+        label.textContent = t.text;
+        const del = document.createElement("button");
+        del.className = "delete";
+        del.textContent = "x";
+        del.title = "Delete";
+        del.addEventListener("click", () => {
+          items = items.filter(x => x.id !== t.id);
+          save();
+          render();
+        });
+        li.append(cb, label, del);
+        list.appendChild(li);
+      }
+    }
+    const remaining = items.filter(t => !t.done).length;
+    count.textContent = `${remaining} item${remaining === 1 ? "" : "s"} left`;
+  }
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    items.push({ id: Date.now() + Math.random(), text, done: false });
+    input.value = "";
+    save();
+    render();
+  });
+
+  document.querySelectorAll(".filters button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      filter = btn.dataset.filter;
+      document.querySelectorAll(".filters button").forEach(b => b.classList.toggle("active", b === btn));
+      render();
+    });
+  });
+
+  document.getElementById("clear-done").addEventListener("click", () => {
+    items = items.filter(t => !t.done);
+    save();
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
