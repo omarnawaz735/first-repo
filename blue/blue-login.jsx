@@ -13,8 +13,7 @@ function Login(props) {
     const em = email.trim();
     if (!em || !password.trim()) { setError("Please enter an email and password."); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { setError("That doesn't look like a valid email."); return; }
-    // Fake auth for the demo: any valid-looking credentials are accepted.
-    props.onAuth({ email: em });
+    props.onAuth({ email: em }); // fake auth: any valid-looking credentials are accepted
   }
 
   return (
@@ -41,9 +40,7 @@ function Login(props) {
               onChange={function (e) { setPassword(e.target.value); setError(""); }} />
           </label>
           {error && <p className="auth-error">{error}</p>}
-          <button type="submit" className="auth-submit">
-            {mode === "login" ? "Log in" : "Sign up"}
-          </button>
+          <button type="submit" className="auth-submit">{mode === "login" ? "Log in" : "Sign up"}</button>
         </form>
 
         <p className="auth-switch">

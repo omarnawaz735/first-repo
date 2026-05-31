@@ -1,31 +1,34 @@
 // ============================================================
-// blue-home.jsx — home / empty-state screen (greeting + composer)
+// blue-home.jsx — greeting + composer + action chips
 // ============================================================
-function Home(props) {
-  const user = props.user;
-  const name = (user.email || "there").split("@")[0];
-  const suggestions = [
-    "Explain my FYP idea in simple terms",
-    "Help me write a professional email",
-    "Give me 5 ideas to impress my supervisor",
-    "Summarize this paragraph for me",
-  ];
+const HOME_CHIPS = [
+  { label: "Write",   Icon: IconWrite,   prompt: "Help me write " },
+  { label: "Learn",   Icon: IconLearn,   prompt: "Explain " },
+  { label: "Plan",    Icon: IconPlan,    prompt: "Help me plan " },
+  { label: "Code",    Icon: IconCode,    prompt: "Write code that " },
+  { label: "Analyze", Icon: IconAnalyze, prompt: "Analyze " },
+];
 
+function Home(props) {
   return (
     <div className="home">
       <div className="home-inner">
-        <h1 className="home-greeting">Hello, {name} 👋</h1>
-        <p className="home-tagline">How can Blue help you today?</p>
+        <h1 className="greet">
+          <span className="greet-spark"><IconSparkle size={26} /></span>
+          {getGreeting()}, <span className="greet-name">{props.name}</span>
+        </h1>
 
         <Composer
           draft={props.draft} setDraft={props.setDraft} onSend={props.onSend}
-          model={props.model} setModel={props.setModel} autoFocus={true} />
+          model={props.model} setModel={props.setModel}
+          effort={props.effort} setEffort={props.setEffort} autoFocus={true} />
 
-        <div className="suggestions">
-          {suggestions.map(function (s) {
+        <div className="chips">
+          {HOME_CHIPS.map(function (c) {
+            const ChipIcon = c.Icon;
             return (
-              <button key={s} className="suggestion" onClick={function () { props.onSend(s); }}>
-                {s}
+              <button key={c.label} className="chip" onClick={function () { props.onChip(c.prompt); }}>
+                <ChipIcon size={16} /><span>{c.label}</span>
               </button>
             );
           })}

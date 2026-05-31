@@ -5,7 +5,7 @@ function Message(props) {
   const isUser = props.role === "user";
   return (
     <div className={"msg " + (isUser ? "msg-user" : "msg-bot")}>
-      {!isUser && <div className="msg-avatar"><IconSpark size={16} /></div>}
+      {!isUser && <div className="msg-avatar"><IconSparkle size={15} /></div>}
       <div className="msg-bubble">{props.content}</div>
     </div>
   );
@@ -14,7 +14,7 @@ function Message(props) {
 function TypingIndicator() {
   return (
     <div className="msg msg-bot">
-      <div className="msg-avatar"><IconSpark size={16} /></div>
+      <div className="msg-avatar"><IconSparkle size={15} /></div>
       <div className="msg-bubble typing"><span></span><span></span><span></span></div>
     </div>
   );
@@ -43,7 +43,8 @@ function Chat(props) {
       <div className="chat-composer-wrap">
         <Composer
           draft={props.draft} setDraft={props.setDraft} onSend={props.onSend}
-          model={props.model} setModel={props.setModel} autoFocus={true} />
+          model={props.model} setModel={props.setModel}
+          effort={props.effort} setEffort={props.setEffort} autoFocus={true} />
       </div>
     </div>
   );
