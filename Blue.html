@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="blue/blue.css" />
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<!-- Order matters: each file's components/helpers must be defined before the next uses them -->
+<script type="text/babel" src="blue/blue-data.jsx"></script>
+<script type="text/babel" src="blue/blue-icons.jsx"></script>
+<script type="text/babel" src="blue/blue-composer.jsx"></script>
+<script type="text/babel" src="blue/blue-sidebar.jsx"></script>
+<script type="text/babel" src="blue/blue-login.jsx"></script>
+<script type="text/babel" src="blue/blue-home.jsx"></script>
+<script type="text/babel" src="blue/blue-chat.jsx"></script>
+<script type="text/babel" src="blue/blue-app.jsx"></script>
+</body>
+</html>
